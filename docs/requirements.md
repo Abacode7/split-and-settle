@@ -1,6 +1,6 @@
-# Split & Settle -- Requirements Document
+# Split & Settle — Requirements Document
 
-**Product:** Split & Settle -- Group expense splitting with instant settlement for Nigerian friend groups.
+**Product:** Split & Settle — Group expense splitting with instant settlement for Nigerian friend groups.
 
 **Version:** 1.0
 **Last Updated:** 2026-11-07
@@ -11,9 +11,9 @@
 
 ## 1. Overview
 
-Split & Settle allows a group organizer to create expense splits, invite participants, collect payments, and view a reconciliation summary once all shares are settled. The application targets Nigerian users in social contexts -- dinners, trips, shared subscriptions -- where one person fronts the cost and needs a lightweight way to collect from others.
+Split & Settle allows a group organizer to create expense splits, invite participants, collect payments, and view a reconciliation summary once all shares are settled. The application targets Nigerian users in social contexts — dinners, trips, shared subscriptions — where one person fronts the cost and needs a lightweight way to collect from others.
 
-> **[PM Note]:** AI initially framed this product as a "bill-splitting utility," which undersells the settlement layer. Split & Settle is not just a calculator -- it records actual payment transactions and tracks settlement status. Reframed the overview to emphasize the transactional nature, which is what makes it a fintech product rather than a lifestyle app.
+> **[PM Note]:** AI initially framed this product as a "bill-splitting utility," which undersells the settlement layer. Split & Settle isn't just a calculator — it records actual payment transactions and tracks settlement status. Reframed the overview to emphasize the transactional nature, which is what makes it a fintech product rather than a lifestyle app.
 
 ---
 
@@ -25,9 +25,9 @@ Split & Settle allows a group organizer to create expense splits, invite partici
 | **Participant** | A user added to a split who owes a share of the expense. |
 | **Split** | A single expense divided among two or more people. |
 | **Settlement** | The state reached when all participants have paid their respective shares. |
-| **BVN** | Bank Verification Number -- an 11-digit identity number issued by NIBSS to every bank account holder in Nigeria. |
-| **AML** | Anti-Money Laundering -- regulatory requirements that flag suspicious transaction patterns. |
-| **NIBSS** | Nigeria Inter-Bank Settlement System -- the central infrastructure for payments and identity verification in Nigeria. |
+| **BVN** | Bank Verification Number — an 11-digit identity number issued by NIBSS to every bank account holder in Nigeria. |
+| **AML** | Anti-Money Laundering — regulatory requirements that flag suspicious transaction patterns. |
+| **NIBSS** | Nigeria Inter-Bank Settlement System — the central infrastructure for payments and identity verification in Nigeria. |
 
 ---
 
@@ -39,7 +39,7 @@ Split & Settle allows a group organizer to create expense splits, invite partici
 
 **As a** new user, **I want to** register with my phone number and verify my identity via BVN, **so that** I can access the app in compliance with Nigerian financial regulations.
 
-> **[PM Note]:** AI initially suggested email-based registration with optional phone number. In Nigeria, phone numbers are the primary digital identity -- most users have a phone number before they have an email address, and mobile money infrastructure is phone-first. Changed to phone-number-first registration with optional email. This also aligns with how Nigerian fintech apps like OPay, PalmPay, and Kuda onboard users.
+> **[PM Note]:** AI initially suggested email-based registration with optional phone number. In Nigeria, phone numbers are the primary digital identity — most users have a phone number before they have an email address, and mobile money infrastructure is phone-first. Changed to phone-number-first registration with optional email. This also aligns with how Nigerian fintech apps like OPay, PalmPay, and Kuda onboard users.
 
 **Acceptance Criteria:**
 
@@ -47,18 +47,18 @@ Split & Settle allows a group organizer to create expense splits, invite partici
 - [ ] User is prompted to enter their 11-digit BVN after phone number entry.
 - [ ] System validates that the BVN is exactly 11 numeric digits before submission.
 - [ ] A valid BVN (any 11-digit number not matching a known-failure pattern) returns a successful verification and the user proceeds to the dashboard.
-- [ ] BVN `00000000000` returns a "BVN not found" error -- the user is shown a distinct message: "We could not find a BVN matching this number. Please check and try again."
-- [ ] BVN `11111111111` returns a "BVN flagged" error -- the user is shown a distinct message: "Your BVN has been flagged for review. Please contact your bank for more information."
-- [ ] User cannot access any app functionality (creating splits, viewing splits, making payments) until BVN verification is successful.
+- [ ] BVN `00000000000` returns a "BVN not found" error — the user is shown a distinct message: "We could not find a BVN matching this number. Please check and try again."
+- [ ] BVN `11111111111` returns a "BVN flagged" error — the user is shown a distinct message: "Your BVN has been flagged for review. Please contact your bank for more information."
+- [ ] User can't access any app functionality (creating splits, viewing splits, making payments) until BVN verification is successful.
 - [ ] On successful verification, the user's profile is created with their name, phone number, and verified status.
 
-> **[PM Note]:** AI generated a single generic error state for BVN verification failure ("BVN verification failed, please try again"). This is inadequate. NIBSS returns distinct failure codes -- "not found" and "flagged" are fundamentally different situations with different user actions required. A "not found" user likely mistyped their BVN; a "flagged" user has a regulatory issue that no amount of retrying will fix. Separated these into two distinct error states with appropriate copy and next-step guidance.
+> **[PM Note]:** AI generated a single generic error state for BVN verification failure ("BVN verification failed, please try again"). This is inadequate. NIBSS returns distinct failure codes —"not found" and "flagged" are fundamentally different situations with different user actions required. A "not found" user likely mistyped their BVN; a "flagged" user has a regulatory issue that no amount of retrying will fix. Separated these into two distinct error states with appropriate copy and next-step guidance.
 
 **Edge Cases:**
 
-- User enters a BVN with fewer or more than 11 digits -- inline validation prevents submission.
-- User enters non-numeric characters in BVN field -- input is restricted to digits only.
-- User closes the app mid-verification -- on return, they are redirected to the verification screen and must complete it before proceeding.
+- User enters a BVN with fewer or more than 11 digits — inline validation prevents submission.
+- User enters non-numeric characters in BVN field — input is restricted to digits only.
+- User closes the app mid-verification — on return, they are redirected to the verification screen and must complete it before proceeding.
 
 ---
 
@@ -78,16 +78,16 @@ Split & Settle allows a group organizer to create expense splits, invite partici
 - [ ] On creation, the split status is set to "active" and each participant's payment status is set to "pending."
 - [ ] The organizer's own share (if they are a participant) is automatically marked as "paid" since they fronted the expense.
 
-> **[PM Note]:** The original AI-generated acceptance criteria did not address what happens when the organizer is also a participant in the split. This is the most common real-world scenario -- the organizer paid for dinner and is splitting the bill including their own portion. Added the criterion that the organizer's share is automatically marked as "paid" since they already fronted the money. Without this, the organizer would have to "pay themselves," which makes no sense.
+> **[PM Note]:** The original AI-generated acceptance criteria did not address what happens when the organizer is also a participant in the split. This is the most common real-world scenario — the organizer paid for dinner and is splitting the bill including their own portion. Added the criterion that the organizer's share is automatically marked as "paid" since they already fronted the money. Without this, the organizer would have to "pay themselves," which makes no sense.
 
-> **[PM Note]:** AI suggested that percentage-based splitting should allow decimal Naira values (e.g., N3,333.33). Corrected this: round to whole Naira amounts. Nigerians do not transact in kobo for social payments -- no one sends N3,333.33 to a friend. The rounding remainder is assigned to the last participant or absorbed by the organizer, keeping amounts clean and transferable.
+> **[PM Note]:** AI suggested that percentage-based splitting should allow decimal Naira values (e.g., N3,333.33). Corrected this: round to whole Naira amounts. Nigerians don't transact in kobo for social payments — no one sends N3,333.33 to a friend. The rounding remainder is assigned to the last participant or absorbed by the organizer, keeping amounts clean and transferable.
 
 **Edge Cases:**
 
-- Organizer enters a total amount of N0 or a negative number -- validation prevents split creation.
-- In custom split mode, the sum of individual amounts does not equal the total -- the system shows the discrepancy and blocks creation.
-- In percentage mode, percentages do not total 100% -- the system shows the difference and blocks creation.
-- Organizer tries to create a split with only themselves -- validation requires at least one other participant.
+- Organizer enters a total amount of N0 or a negative number — validation prevents split creation.
+- In custom split mode, the sum of individual amounts doesn't equal the total — the system shows the discrepancy and blocks creation.
+- In percentage mode, percentages don't total 100% — the system shows the difference and blocks creation.
+- Organizer tries to create a split with only themselves — validation requires at least one other participant.
 
 ---
 
@@ -102,12 +102,12 @@ Split & Settle allows a group organizer to create expense splits, invite partici
 - [ ] On successful payment, the participant's status for that split changes from "pending" to "paid."
 - [ ] The payment transaction is recorded with: participant ID, split ID, amount, timestamp, and transaction reference.
 - [ ] Participant receives a confirmation screen showing the payment details and a "Return to Splits" action.
-- [ ] The organizer is notified (in-app) when a participant completes payment.
+- [ ] The organizer notified (in-app) when a participant completes payment.
 
 **Edge Cases:**
 
-- Participant tries to pay a split they have already paid -- the "Pay Now" button is replaced with a "Paid" badge and is not actionable.
-- Participant views a split that has already been fully settled -- they see a "Settled" status with no payment action available.
+- Participant tries to pay a split they have already paid — the "Pay Now" button is replaced with a "Paid" badge and isn't actionable.
+- Participant views a split that has already been fully settled — they see a "Settled" status with no payment action available.
 
 ---
 
@@ -122,49 +122,49 @@ Split & Settle allows a group organizer to create expense splits, invite partici
 - [ ] When all participants have paid their shares, the split status automatically changes from "active" to "settled."
 - [ ] The organizer sees a clear visual indicator when a split reaches "settled" status.
 - [ ] The reconciliation view updates in real-time (or on refresh) as payments come in.
-- [ ] Organizer can send a "friendly reminder" to participants who have not yet paid.
+- [ ] Organizer can send a "friendly reminder" to participants who haven't yet paid.
 
-> **[PM Note]:** AI initially labelled the reminder feature "Send Payment Demand" in its suggested copy. This is tone-deaf for the Nigerian social context. Splitting expenses among friends is already a socially delicate situation -- nobody wants to feel like a debt collector among their inner circle. Changed the copy to "Send Friendly Reminder." The feature needs to feel light and non-confrontational, not like a legal notice. Small copy decisions like this are the difference between a product people actually use and one they avoid out of embarrassment.
+> **[PM Note]:** AI initially labelled the reminder feature "Send Payment Demand" in its suggested copy. This is tone-deaf for the Nigerian social context. Splitting expenses among friends is already a socially delicate situation — nobody wants to feel like a debt collector among their inner circle. Changed the copy to "Send Friendly Reminder." The feature needs to feel light and non-confrontational, not like a legal notice. Small copy decisions like this are the difference between a product people actually use and one they avoid out of embarrassment.
 
 **Edge Cases:**
 
-- Organizer views reconciliation for a split where no one has paid yet -- total received is N0, all participants show "pending."
-- A split has partial payments (some paid, some pending) -- the outstanding amount is clearly shown and the status remains "active."
+- Organizer views reconciliation for a split where no one has paid yet — total received is N0, all participants show "pending."
+- A split has partial payments (some paid, some pending) — the outstanding amount is clearly shown and the status remains "active."
 
 ---
 
 ### US-5: Payment Failure and Dispute Resolution
 
-**As a** participant, **I want to** be able to retry a failed payment or raise a dispute, **so that** I am not stuck when a payment does not go through.
+**As a** participant, **I want to** be able to retry a failed payment or raise a dispute, **so that** I am not stuck when a payment doesn't go through.
 
 **Acceptance Criteria:**
 
-- [ ] When a payment fails (simulated: insufficient funds scenario), the participant sees a clear error message: "Payment failed -- insufficient funds. Please try again or use a different funding source."
-- [ ] The participant's payment status remains "pending" after a failure -- it does not change to "failed" as a terminal state.
+- [ ] When a payment fails (simulated: insufficient funds scenario), the participant sees a clear error message: "Payment failed — insufficient funds. Please try again or use a different funding source."
+- [ ] The participant's payment status remains "pending" after a failure — it doesn't change to "failed" as a terminal state.
 - [ ] A "Retry Payment" button is displayed after a failure, allowing the participant to attempt payment again.
 - [ ] If the participant believes the failure is incorrect, they can tap "Raise Dispute" to flag the transaction.
-- [ ] When a dispute is raised: the split status changes to "disputed," the organizer is notified in-app, and the disputed transaction is marked for review.
+- [ ] When a dispute is raised: the split status changes to "disputed," the organizer notified in-app, and the disputed transaction is marked for review.
 - [ ] The dispute record includes: participant ID, split ID, amount, reason (free-text entry), and timestamp.
 - [ ] The organizer can view disputes on their reconciliation screen with the participant's stated reason.
 
 **Edge Cases:**
 
-- Participant raises a dispute on a split they have already successfully paid -- the system prevents this and shows "This share has already been settled."
-- Multiple participants dispute the same split -- each dispute is recorded independently and the split remains in "disputed" status until all disputes are resolved.
-- Organizer tries to mark a disputed split as settled -- the system blocks this until all disputes are resolved.
+- Participant raises a dispute on a split they have already successfully paid — the system prevents this and shows "This share has already been settled."
+- Multiple participants dispute the same split — each dispute is recorded independently and the split remains in "disputed" status until all disputes are resolved.
+- Organizer tries to mark a disputed split as settled — the system blocks this until all disputes are resolved.
 
 ---
 
 ### US-6: AML-Flagged Transaction
 
-**As a** user, **I want to** be informed if my transaction is held for anti-money laundering review, **so that** I understand why my payment is not processing immediately and what to expect next.
+**As a** user, **I want to** be informed if my transaction is held for anti-money laundering review, **so that** I understand why my payment isn't processing immediately and what to expect next.
 
 **Acceptance Criteria:**
 
 - [ ] Any single participant payment exceeding N500,000 triggers an AML review flag.
 - [ ] When a transaction is flagged, the payment is recorded with status "held_for_review" rather than "paid."
 - [ ] The participant sees a notification: "This transaction has been flagged for review due to its amount. You will be notified within 24 hours."
-- [ ] The split does not move to "settled" status while any transaction is in "held_for_review" state.
+- [ ] The split doesn't move to "settled" status while any transaction is in "held_for_review" state.
 - [ ] The organizer's reconciliation view shows the participant's status as "Under Review" with a distinct visual treatment (not "pending" and not "paid").
 - [ ] After the 24-hour review period (simulated in demo), the transaction is either approved (status changes to "paid") or rejected (status changes to "pending" with a notification to retry with a lower amount or contact support).
 - [ ] The AML threshold and review outcome are logged for audit purposes.
@@ -173,9 +173,9 @@ Split & Settle allows a group organizer to create expense splits, invite partici
 
 **Edge Cases:**
 
-- A split total is N600,000 divided equally among 3 people (N200,000 each) -- no individual payment exceeds N500,000, so no AML flag is triggered. The flag applies to the individual payment amount, not the split total.
-- A participant pays N500,001 -- this triggers the AML flag. The threshold is strictly "exceeds N500,000," not "equals."
-- An organizer creates a split where one participant's custom share exceeds N500,000 -- the AML flag is triggered only at the point of payment, not at split creation. The organizer is not warned in advance (to avoid tipping off potential bad actors, consistent with AML best practices).
+- A split total is N600,000 divided equally among 3 people (N200,000 each) — no individual payment exceeds N500,000, so no AML flag is triggered. The flag applies to the individual payment amount, not the split total.
+- A participant pays N500,001 — this triggers the AML flag. The threshold is strictly "exceeds N500,000," not "equals."
+- An organizer creates a split where one participant's custom share exceeds N500,000 — the AML flag is triggered only at the point of payment, not at split creation. The organizer isn't warned in advance (to avoid tipping off potential bad actors, consistent with AML best practices).
 
 ---
 
@@ -187,15 +187,15 @@ Split & Settle allows a group organizer to create expense splits, invite partici
 
 - [ ] A profile switcher is accessible from the app header or settings screen at all times during the demo.
 - [ ] Three demo profiles are available: Tunde (organizer role), Amaka (participant role), and Chidi (edge-case scenarios).
-- [ ] Switching profiles immediately updates the app state to reflect that user's view -- their splits, payment statuses, and notifications.
-- [ ] Profile switching does not require re-authentication or BVN verification (profiles are pre-verified for demo purposes).
+- [ ] Switching profiles immediately updates the app state to reflect that user's view — their splits, payment statuses, and notifications.
+- [ ] Profile switching doesn't require re-authentication or BVN verification (profiles are pre-verified for demo purposes).
 - [ ] A "Reset Demo Data" button is available that restores all splits, payments, and statuses to their initial demo state.
 - [ ] After reset, all splits are removed, all payment records are cleared, and all profiles return to their default state.
 
 **Edge Cases:**
 
-- User switches profile while in the middle of creating a split -- the in-progress split is discarded and the user is taken to the new profile's dashboard.
-- User resets demo data while a split is in "disputed" or "held_for_review" status -- the reset clears all states regardless.
+- User switches profile while in the middle of creating a split — the in-progress split is discarded and the user is taken to the new profile's dashboard.
+- User resets demo data while a split is in "disputed" or "held_for_review" status — the reset clears all states regardless.
 
 ---
 
@@ -212,7 +212,7 @@ Split & Settle allows a group organizer to create expense splits, invite partici
    - **Verified:** User proceeds to the dashboard.
    - **Not Found (BVN: 00000000000):** User is shown an error with guidance to re-check.
    - **Flagged (BVN: 11111111111):** User is shown an error with guidance to contact their bank.
-7. Users who do not pass verification cannot access any transactional feature.
+7. Users who don't pass verification can't access any transactional feature.
 
 ### 4.2 Regulatory Context
 
@@ -230,7 +230,7 @@ Nigerian fintech applications are required to perform Know Your Customer (KYC) c
 4. As each participant pays, a transaction record is created and their status moves to "paid."
 5. After each payment, the system checks: have all participants paid?
    - **No:** Split remains "active." Reconciliation view shows outstanding balance.
-   - **Yes:** Split status changes to "settled." Organizer is notified.
+   - **Yes:** Split status changes to "settled." Organizer notified.
 6. Organizer can view the reconciliation summary at any time:
    - Total expected: sum of all shares.
    - Total received: sum of all "paid" transactions.
@@ -269,8 +269,8 @@ Nigerian fintech applications are required to perform Know Your Customer (KYC) c
 2. Participant enters a reason for the dispute (free text).
 3. Dispute is recorded in the system.
 4. Split status changes to "disputed."
-5. Organizer is notified and can view dispute details in the reconciliation view.
-6. Split cannot be marked as "settled" until all disputes are resolved.
+5. Organizer notified and can view dispute details in the reconciliation view.
+6. Split can't be marked as "settled" until all disputes are resolved.
 
 ### 6.3 AML Hold Flow
 
@@ -279,16 +279,16 @@ Nigerian fintech applications are required to perform Know Your Customer (KYC) c
 3. Participant is informed of the hold and the 24-hour review window.
 4. After review (simulated), the transaction is approved or rejected.
 5. If approved, status changes to "paid" and normal settlement logic applies.
-6. If rejected, status reverts to "pending" and the participant is notified with next steps.
+6. If rejected, status reverts to "pending" and the participant notified with next steps.
 
 ---
 
-## 7. Split Methods -- Detailed Rules
+## 7. Split Methods — Detailed Rules
 
 | Method | Rule | Rounding |
 |--------|------|----------|
 | **Equal** | Total / number of participants. | Round to nearest whole Naira. Remainder absorbed by organizer. |
-| **Custom** | Organizer enters each share manually. | No rounding -- amounts must be whole Naira and sum to total. |
+| **Custom** | Organizer enters each share manually. | No rounding — amounts must be whole Naira and sum to total. |
 | **Percentage** | Organizer assigns percentage per participant. Percentages must total 100%. | Calculate each share, round down to whole Naira. Remainder added to last participant. |
 
 ---
@@ -331,6 +331,6 @@ This document contains PM annotations that highlight where product judgment was 
 2. **US-1 (Registration):** Changed from email-first to phone-first registration, reflecting Nigerian user behavior and fintech onboarding norms.
 3. **US-1 (BVN Errors):** Separated a generic BVN failure into two distinct error states (not found vs. flagged) matching NIBSS response codes.
 4. **US-2 (Organizer as Participant):** Added the criterion that the organizer's share is auto-marked as paid, addressing the most common real-world use case.
-5. **US-2 (Rounding):** Corrected percentage-based splitting to use whole Naira amounts -- Nigerians do not transact in kobo for social payments.
+5. **US-2 (Rounding):** Corrected percentage-based splitting to use whole Naira amounts — Nigerians don't transact in kobo for social payments.
 6. **US-4 (Reminder Copy):** Changed "Send Payment Demand" to "Send Friendly Reminder" to match the social dynamics of splitting expenses among friends in Nigeria.
 7. **US-6 (AML Threshold):** Corrected the AML threshold from N1,000,000 to N500,000, aligning with CBN reporting thresholds and the product brief.
