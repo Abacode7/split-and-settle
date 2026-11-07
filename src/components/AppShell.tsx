@@ -116,6 +116,11 @@ export default function AppShell() {
             currentUser={currentUser}
             onSwitchUser={(userId) => updateState(switchUser(state, userId))}
             onReset={() => setState(resetState())}
+            onShowOnboarding={() => {
+              const s = { ...state, onboarded: false };
+              setState(s);
+              saveState(s);
+            }}
             showToast={showToast}
           />
         )}

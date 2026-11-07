@@ -7,6 +7,7 @@ interface Props {
   currentUser: User;
   onSwitchUser: (userId: string) => void;
   onReset: () => void;
+  onShowOnboarding: () => void;
   showToast: (msg: string, type?: "success" | "error" | "warning" | "info") => void;
 }
 
@@ -16,7 +17,7 @@ const KYC_STYLES: Record<string, string> = {
   failed: "bg-red-50 text-red-600",
 };
 
-export default function Profile({ state, currentUser, onSwitchUser, onReset, showToast }: Props) {
+export default function Profile({ state, currentUser, onSwitchUser, onReset, onShowOnboarding, showToast }: Props) {
   return (
     <div className="animate-fade-in">
       {/* Page title */}
@@ -93,8 +94,14 @@ export default function Profile({ state, currentUser, onSwitchUser, onReset, sho
         </div>
       </div>
 
-      {/* Reset & footer */}
-      <div className="space-y-4 animate-fade-up">
+      {/* Demo actions & footer */}
+      <div className="space-y-3 animate-fade-up">
+        <button
+          onClick={onShowOnboarding}
+          className="glass-card py-3.5 rounded-2xl font-semibold text-sm text-primary-600 w-full transition-colors hover:bg-primary-50"
+        >
+          Replay Onboarding / KYC Flow
+        </button>
         <button
           onClick={() => {
             onReset();
