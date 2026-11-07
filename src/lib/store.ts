@@ -1,5 +1,4 @@
 import { AppState, Split, Transaction, User } from "./types";
-import { generateId } from "./utils";
 
 const STORAGE_KEY = "split-and-settle";
 
