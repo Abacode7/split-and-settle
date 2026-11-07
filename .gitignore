@@ -35,6 +35,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# project docs & superpowers (do not commit)
-docs/
+# superpowers brainstorming artifacts
+docs/superpowers/
 .superpowers/
