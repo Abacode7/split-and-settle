@@ -15,6 +15,9 @@ const bricolage = Bricolage_Grotesque({
 export const metadata: Metadata = {
   title: "Split & Settle",
   description: "Split group expenses and settle payments instantly",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({
