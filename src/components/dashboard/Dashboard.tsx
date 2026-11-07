@@ -56,71 +56,132 @@ export default function Dashboard({ state, currentUser, updateState, showToast }
   }
 
   return (
-    <div>
-      <div className="mb-6">
-        <p className="text-sm text-gray-500">Welcome back,</p>
-        <h1 className="text-2xl font-bold text-gray-900">{currentUser.name.split(" ")[0]} 👋</h1>
+    <div className="pb-8">
+      {/* Header */}
+      <div className="mb-8 animate-fade-up">
+        <p className="section-label mb-1">Welcome back</p>
+        <h1 className="text-3xl font-display font-bold text-surface-900 leading-tight">
+          {currentUser.name.split(" ")[0]}
+        </h1>
       </div>
 
-      <div className="grid grid-cols-3 gap-3 mb-6">
-        <div className="bg-red-50 rounded-xl p-3">
-          <p className="text-[10px] font-medium text-red-400 uppercase tracking-wide">You Owe</p>
-          <p className="text-lg font-bold text-red-600 mt-1">{formatCurrency(youOwe)}</p>
+      {/* Summary Stat Cards */}
+      <div className="grid grid-cols-3 gap-3 mb-8 animate-fade-up-1">
+        {/* You Owe */}
+        <div className="stat-card bg-gradient-to-br from-red-500 to-red-600 text-white rounded-2xl p-4 relative overflow-hidden">
+          <div className="relative z-10">
+            <div className="mb-2">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 19V5M5 12l7-7 7 7" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+            <p className="text-[10px] font-display font-bold uppercase tracking-wider opacity-90">You Owe</p>
+            <p className="text-xl font-display font-bold mt-0.5 leading-none">{formatCurrency(youOwe)}</p>
+          </div>
         </div>
-        <div className="bg-primary-50 rounded-xl p-3">
-          <p className="text-[10px] font-medium text-primary-400 uppercase tracking-wide">Owed to You</p>
-          <p className="text-lg font-bold text-primary-600 mt-1">{formatCurrency(owedToYou)}</p>
+
+        {/* Owed to You */}
+        <div className="stat-card bg-gradient-to-br from-primary-500 to-primary-700 text-white rounded-2xl p-4 relative overflow-hidden">
+          <div className="relative z-10">
+            <div className="mb-2">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 5v14M19 12l-7 7-7-7" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+            <p className="text-[10px] font-display font-bold uppercase tracking-wider opacity-90">Incoming</p>
+            <p className="text-xl font-display font-bold mt-0.5 leading-none">{formatCurrency(owedToYou)}</p>
+          </div>
         </div>
-        <div className="bg-gray-100 rounded-xl p-3">
-          <p className="text-[10px] font-medium text-gray-400 uppercase tracking-wide">Settled</p>
-          <p className="text-lg font-bold text-gray-700 mt-1">{formatCurrency(settledThisMonth)}</p>
+
+        {/* Settled */}
+        <div className="stat-card bg-gradient-to-br from-surface-700 to-surface-900 text-white rounded-2xl p-4 relative overflow-hidden">
+          <div className="relative z-10">
+            <div className="mb-2">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M20 6L9 17l-5-5" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+            <p className="text-[10px] font-display font-bold uppercase tracking-wider opacity-90">Settled</p>
+            <p className="text-xl font-display font-bold mt-0.5 leading-none">{formatCurrency(settledThisMonth)}</p>
+          </div>
         </div>
       </div>
 
-      <div>
-        <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
-          Active Splits ({activeSplits.length})
-        </h2>
+      {/* Active Splits */}
+      <div className="mb-8 animate-fade-up-2">
+        <p className="section-label mb-3">Active Splits ({activeSplits.length})</p>
+
         {activeSplits.length === 0 ? (
-          <div className="bg-white rounded-xl p-8 text-center border border-gray-100">
-            <p className="text-gray-400 text-sm">No active splits yet</p>
-            <p className="text-gray-300 text-xs mt-1">Create one from the Split tab</p>
+          <div className="glass-card rounded-2xl p-8 text-center">
+            <div className="w-12 h-12 rounded-full bg-primary-50 flex items-center justify-center mx-auto mb-3">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 5v14M5 12h14" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round" />
+              </svg>
+            </div>
+            <p className="font-body font-medium text-surface-500 text-sm">No active splits yet</p>
+            <p className="font-body text-surface-300 text-xs mt-1">Create one from the Split tab</p>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="flex flex-col gap-3">
             {activeSplits.map((split) => {
               const paidCount = split.participants.filter((p) => p.status === "paid").length;
               const totalCount = split.participants.length;
               const isOrganizer = split.createdBy === currentUser.id;
               const myParticipant = split.participants.find((p) => p.userId === currentUser.id);
+              const progressPct = totalCount > 0 ? (paidCount / totalCount) * 100 : 0;
+              const firstLetter = split.title.charAt(0).toUpperCase();
 
               return (
                 <button
                   key={split.id}
                   onClick={() => setSelectedSplit(split)}
-                  className="w-full bg-white rounded-xl p-4 border border-gray-100 text-left hover:border-primary-200 transition-colors"
+                  className="glass-card rounded-2xl p-4 text-left w-full"
                 >
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="font-semibold text-gray-900 text-sm">{split.title}</h3>
-                    <span className="text-xs font-medium text-primary-600 bg-primary-50 px-2 py-0.5 rounded-full">
-                      {isOrganizer ? "Organizer" : "Participant"}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-end">
-                    <div>
-                      <p className="text-lg font-bold text-gray-900">{formatCurrency(split.totalAmount)}</p>
-                      <p className="text-xs text-gray-400 mt-0.5">{paidCount}/{totalCount} paid</p>
+                  <div className="flex items-start gap-3 mb-3">
+                    {/* Avatar */}
+                    <div className="avatar w-10 h-10 rounded-full flex items-center justify-center shrink-0 text-sm font-display font-bold">
+                      {firstLetter}
                     </div>
-                    {!isOrganizer && myParticipant?.status === "pending" && (
-                      <span className="text-xs font-medium text-red-600 bg-red-50 px-2 py-1 rounded-full">
-                        You owe {formatCurrency(myParticipant.amount)}
-                      </span>
-                    )}
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex justify-between items-start gap-2">
+                        <h3 className="font-display font-bold text-surface-900 text-sm truncate leading-snug">
+                          {split.title}
+                        </h3>
+                        <span
+                          className={`status-badge shrink-0 ${
+                            isOrganizer
+                              ? "bg-primary-50 text-primary-700"
+                              : "bg-surface-100 text-surface-500"
+                          }`}
+                        >
+                          {isOrganizer ? "Organizer" : "Member"}
+                        </span>
+                      </div>
+
+                      <div className="flex justify-between items-end mt-1">
+                        <div>
+                          <p className="text-xl font-display font-bold text-surface-900 leading-none">
+                            {formatCurrency(split.totalAmount)}
+                          </p>
+                          <p className="text-[11px] font-body text-surface-400 mt-0.5">
+                            {paidCount}/{totalCount} paid
+                          </p>
+                        </div>
+                        {!isOrganizer && myParticipant?.status === "pending" && (
+                          <span className="status-badge bg-red-50 text-red-600 shrink-0">
+                            Owes {formatCurrency(myParticipant.amount)}
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                  <div className="mt-3 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+
+                  {/* Progress bar */}
+                  <div className="progress-bar">
                     <div
-                      className="h-full bg-primary-500 rounded-full transition-all"
-                      style={{ width: `${(paidCount / totalCount) * 100}%` }}
+                      className="progress-bar-fill"
+                      style={{ width: `${progressPct}%` }}
                     />
                   </div>
                 </button>
@@ -130,12 +191,11 @@ export default function Dashboard({ state, currentUser, updateState, showToast }
         )}
       </div>
 
+      {/* Recently Settled */}
       {mySplits.filter((s) => s.status === "settled").length > 0 && (
-        <div className="mt-6">
-          <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">
-            Recently Settled
-          </h2>
-          <div className="space-y-2">
+        <div className="animate-fade-up-3">
+          <p className="section-label mb-3">Recently Settled</p>
+          <div className="flex flex-col gap-3">
             {mySplits
               .filter((s) => s.status === "settled")
               .slice(0, 3)
@@ -143,14 +203,26 @@ export default function Dashboard({ state, currentUser, updateState, showToast }
                 <button
                   key={split.id}
                   onClick={() => setSelectedSplit(split)}
-                  className="w-full bg-white rounded-xl p-3 border border-gray-100 flex justify-between items-center text-left"
+                  className="glass-card rounded-2xl p-4 flex justify-between items-center text-left w-full"
                 >
-                  <div>
-                    <h3 className="font-medium text-gray-700 text-sm">{split.title}</h3>
-                    <p className="text-xs text-gray-400">{formatCurrency(split.totalAmount)}</p>
+                  <div className="flex items-center gap-3">
+                    {/* Green checkmark in rounded square */}
+                    <div className="w-9 h-9 rounded-xl bg-primary-50 flex items-center justify-center shrink-0">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M20 6L9 17l-5-5" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="font-display font-semibold text-surface-700 text-sm leading-snug">
+                        {split.title}
+                      </h3>
+                      <p className="text-xs font-body text-surface-400 mt-0.5">
+                        {formatCurrency(split.totalAmount)}
+                      </p>
+                    </div>
                   </div>
-                  <span className="text-xs font-medium text-primary-600 bg-primary-50 px-2 py-1 rounded-full">
-                    Settled ✓
+                  <span className="status-badge bg-primary-50 text-primary-700">
+                    Settled
                   </span>
                 </button>
               ))}

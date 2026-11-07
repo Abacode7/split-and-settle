@@ -26,31 +26,35 @@ export default function History({ state, currentUser }: Props) {
     (t) => t.payerId === currentUser.id || t.receiverId === currentUser.id
   );
 
-  const filtered = filter === "all"
-    ? myTransactions
-    : myTransactions.filter((t) => t.status === filter);
+  const filtered =
+    filter === "all"
+      ? myTransactions
+      : myTransactions.filter((t) => t.status === filter);
 
   const sorted = [...filtered].sort((a, b) => b.createdAt - a.createdAt);
 
-  const statusStyle: Record<string, string> = {
+  const statusBadgeClass: Record<string, string> = {
     success: "bg-primary-50 text-primary-700",
-    failed: "bg-red-50 text-red-700",
-    held: "bg-amber-50 text-amber-700",
+    failed: "bg-red-50 text-red-600",
+    held: "bg-accent-50 text-accent-700",
   };
 
   return (
-    <div>
-      <h1 className="text-xl font-bold text-gray-900 mb-4">Transaction History</h1>
+    <div className="animate-fade-in">
+      <h1 className="font-display font-bold text-xl text-surface-900 mb-4">
+        Transaction History
+      </h1>
 
+      {/* ── Filter Pills ── */}
       <div className="flex gap-2 mb-4 overflow-x-auto pb-1">
         {(Object.keys(FILTER_LABELS) as Filter[]).map((f) => (
           <button
             key={f}
             onClick={() => setFilter(f)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
+            className={`px-3.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all font-body ${
               filter === f
-                ? "bg-primary-600 text-white"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                ? "bg-primary-600 text-white shadow-glow"
+                : "glass-card text-surface-600 hover:text-surface-900"
             }`}
           >
             {FILTER_LABELS[f]}
@@ -58,39 +62,61 @@ export default function History({ state, currentUser }: Props) {
         ))}
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-100 p-4 mb-4">
-        <h3 className="text-xs font-semibold text-gray-400 uppercase mb-2">Summary</h3>
+      {/* ── Summary Card ── */}
+      <div className="glass-card rounded-2xl p-4 mb-4">
+        <h3 className="section-label mb-3">Summary</h3>
         <div className="grid grid-cols-3 gap-2 text-center">
           <div>
-            <p className="text-lg font-bold text-primary-600">
+            <p className="font-display text-xl font-bold text-primary-600">
               {myTransactions.filter((t) => t.status === "success").length}
             </p>
-            <p className="text-[10px] text-gray-400">Successful</p>
+            <p className="text-[10px] text-surface-400 font-body mt-0.5">Successful</p>
           </div>
           <div>
-            <p className="text-lg font-bold text-red-600">
+            <p className="font-display text-xl font-bold text-red-500">
               {myTransactions.filter((t) => t.status === "failed").length}
             </p>
-            <p className="text-[10px] text-gray-400">Failed</p>
+            <p className="text-[10px] text-surface-400 font-body mt-0.5">Failed</p>
           </div>
           <div>
-            <p className="text-lg font-bold text-amber-600">
+            <p className="font-display text-xl font-bold text-accent-600">
               {myTransactions.filter((t) => t.status === "held").length}
             </p>
-            <p className="text-[10px] text-gray-400">Held</p>
+            <p className="text-[10px] text-surface-400 font-body mt-0.5">Held</p>
           </div>
         </div>
       </div>
 
+      {/* ── Transaction List ── */}
       {sorted.length === 0 ? (
-        <div className="bg-white rounded-xl p-8 text-center border border-gray-100">
-          <p className="text-gray-400 text-sm">No transactions yet</p>
+        <div className="glass-card rounded-2xl p-10 text-center animate-fade-up">
+          <div className="w-12 h-12 rounded-2xl bg-surface-100 flex items-center justify-center mx-auto mb-3">
+            <svg
+              className="w-6 h-6 text-surface-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={1.5}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+              />
+            </svg>
+          </div>
+          <p className="text-surface-500 text-sm font-body font-medium">No transactions yet</p>
+          <p className="text-surface-400 text-xs font-body mt-1">
+            Completed payments will appear here
+          </p>
         </div>
       ) : (
         <div className="space-y-2">
-          {sorted.map((tx) => {
+          {sorted.map((tx, idx) => {
             const isPayer = tx.payerId === currentUser.id;
-            const otherUser = state.users.find((u) => u.id === (isPayer ? tx.receiverId : tx.payerId));
+            const otherUser = state.users.find(
+              (u) => u.id === (isPayer ? tx.receiverId : tx.payerId)
+            );
             const split = state.splits.find((s) => s.id === tx.splitId);
             const isExpanded = expandedId === tx.id;
 
@@ -98,53 +124,90 @@ export default function History({ state, currentUser }: Props) {
               <button
                 key={tx.id}
                 onClick={() => setExpandedId(isExpanded ? null : tx.id)}
-                className="w-full bg-white rounded-xl border border-gray-100 p-4 text-left transition-colors hover:border-gray-200"
+                className={`glass-card rounded-2xl p-4 w-full text-left transition-all animate-fade-up`}
+                style={{ animationDelay: `${idx * 40}ms` }}
               >
-                <div className="flex justify-between items-start">
+                <div className="flex justify-between items-start gap-3">
+                  {/* Direction icon + label */}
                   <div className="flex items-center gap-3">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm ${
-                      isPayer ? "bg-red-100 text-red-600" : "bg-primary-100 text-primary-600"
-                    }`}>
-                      {isPayer ? "↑" : "↓"}
+                    <div
+                      className={`w-9 h-9 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 ${
+                        isPayer
+                          ? "bg-gradient-to-br from-red-400 to-orange-500"
+                          : "bg-gradient-to-br from-primary-400 to-primary-600"
+                      }`}
+                    >
+                      {isPayer ? (
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                        </svg>
+                      ) : (
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                        </svg>
+                      )}
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-gray-900">
-                        {isPayer ? `Paid ${otherUser?.name?.split(" ")[0] || "Unknown"}` : `From ${otherUser?.name?.split(" ")[0] || "Unknown"}`}
+                      <p className="text-sm font-semibold text-surface-900 font-body">
+                        {isPayer
+                          ? `Paid ${otherUser?.name?.split(" ")[0] || "Unknown"}`
+                          : `From ${otherUser?.name?.split(" ")[0] || "Unknown"}`}
                       </p>
-                      <p className="text-xs text-gray-400">{split?.title || "Unknown split"}</p>
+                      <p className="text-xs text-surface-400 font-body mt-0.5">
+                        {split?.title || "Unknown split"}
+                      </p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className={`text-sm font-bold ${isPayer ? "text-red-600" : "text-primary-600"}`}>
-                      {isPayer ? "-" : "+"}{formatCurrency(tx.amount)}
+
+                  {/* Amount + status */}
+                  <div className="text-right flex-shrink-0">
+                    <p
+                      className={`text-sm font-bold font-mono ${
+                        isPayer ? "text-red-500" : "text-primary-600"
+                      }`}
+                    >
+                      {isPayer ? "-" : "+"}
+                      {formatCurrency(tx.amount)}
                     </p>
-                    <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${statusStyle[tx.status]}`}>
+                    <span className={`status-badge mt-1 inline-block ${statusBadgeClass[tx.status]}`}>
                       {tx.status}
                     </span>
                   </div>
                 </div>
 
+                {/* Expanded details */}
                 {isExpanded && (
-                  <div className="mt-3 pt-3 border-t border-gray-50 space-y-1">
-                    <div className="flex justify-between text-xs">
-                      <span className="text-gray-400">Reference</span>
-                      <span className="text-gray-600 font-mono">{tx.reference}</span>
+                  <div className="mt-4 pt-4 border-t border-surface-100 space-y-2.5">
+                    <div className="flex justify-between items-center">
+                      <span className="section-label">Reference</span>
+                      <span className="text-xs text-surface-700 font-mono bg-surface-100 px-2 py-0.5 rounded-lg">
+                        {tx.reference}
+                      </span>
                     </div>
-                    <div className="flex justify-between text-xs">
-                      <span className="text-gray-400">Date</span>
-                      <span className="text-gray-600">{formatDate(tx.createdAt)}</span>
+                    <div className="flex justify-between items-center">
+                      <span className="section-label">Date</span>
+                      <span className="text-xs text-surface-600 font-body">{formatDate(tx.createdAt)}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="section-label">Direction</span>
+                      <span className={`text-xs font-semibold font-body ${isPayer ? "text-red-500" : "text-primary-600"}`}>
+                        {isPayer ? "Outgoing" : "Incoming"}
+                      </span>
                     </div>
                     {tx.failReason && (
-                      <div className="flex justify-between text-xs">
-                        <span className="text-gray-400">Reason</span>
-                        <span className="text-red-600">{tx.failReason}</span>
+                      <div className="flex justify-between items-start gap-4">
+                        <span className="section-label flex-shrink-0">Reason</span>
+                        <span className="text-xs text-red-500 font-body text-right">{tx.failReason}</span>
                       </div>
                     )}
                     {tx.amlFlagged && (
-                      <div className="mt-2 bg-amber-50 rounded-lg p-2">
-                        <p className="text-[10px] text-amber-800">
-                          This transaction was flagged for AML review. Expected resolution within 24 hours.
-                        </p>
+                      <div className="mt-2 glass-card border border-accent-300 bg-accent-50 rounded-xl p-3">
+                        <div className="flex items-start gap-2">
+                          <span className="text-accent-500 text-sm mt-0.5">&#9888;</span>
+                          <p className="text-[11px] text-accent-700 leading-relaxed font-body">
+                            This transaction was flagged for AML review. Expected resolution within 24 hours.
+                          </p>
+                        </div>
                       </div>
                     )}
                   </div>

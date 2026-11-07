@@ -119,32 +119,35 @@ export default function CreateSplit({ state, currentUser, updateState, showToast
 
   return (
     <div>
-      <h1 className="text-xl font-bold text-gray-900 mb-6">Create a Split</h1>
+      <h1 className="font-display font-bold text-xl text-surface-900 mb-6">Create a Split</h1>
 
+      {/* ── Step: Details ── */}
       {step === "details" && (
-        <div className="space-y-4">
+        <div className="space-y-4 animate-fade-up">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">What&apos;s this for?</label>
+            <label className="section-label block mb-1.5">What&apos;s this for?</label>
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="e.g. Weekend Trip to Lekki"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none text-gray-900"
+              className="input-field w-full"
             />
           </div>
+
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Description (optional)</label>
+            <label className="section-label block mb-1.5">Description (optional)</label>
             <input
               type="text"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Transport + food + activities"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none text-gray-900"
+              className="input-field w-full"
             />
           </div>
+
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Total Amount (NGN)</label>
+            <label className="section-label block mb-1.5">Total Amount (NGN)</label>
             <input
               type="number"
               value={totalAmount}
@@ -157,50 +160,74 @@ export default function CreateSplit({ state, currentUser, updateState, showToast
                 setShowAmlWarning(amt / Math.max(participants.length, 2) > AML_THRESHOLD);
               }}
               placeholder="15000"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none text-gray-900 text-lg"
+              className="input-field w-full text-lg"
             />
             {total > 0 && (
-              <p className="text-xs text-gray-400 mt-1">{formatCurrency(total)}</p>
+              <p className="text-xs text-surface-400 mt-1.5">{formatCurrency(total)}</p>
             )}
             {total > TRANSACTION_LIMIT && (
-              <p className="text-xs text-red-500 mt-1">Exceeds transaction limit of {formatCurrency(TRANSACTION_LIMIT)}</p>
+              <p className="text-xs text-red-500 mt-1.5">
+                Exceeds transaction limit of {formatCurrency(TRANSACTION_LIMIT)}
+              </p>
             )}
           </div>
+
           {showAmlWarning && (
-            <div className="bg-amber-50 border border-amber-200 rounded-xl p-3">
-              <p className="text-xs text-amber-800">
-                <strong>Large transaction notice:</strong> Individual shares exceeding {formatCurrency(AML_THRESHOLD)} may be flagged for AML review per CBN guidelines.
-              </p>
+            <div className="glass-card border border-accent-300 bg-accent-50 rounded-2xl p-4">
+              <div className="flex items-start gap-2.5">
+                <span className="text-accent-500 text-base mt-0.5">&#9888;</span>
+                <p className="text-xs text-accent-700 leading-relaxed">
+                  <strong className="font-semibold">Large transaction notice:</strong> Individual shares
+                  exceeding {formatCurrency(AML_THRESHOLD)} may be flagged for AML review per CBN guidelines.
+                </p>
+              </div>
             </div>
           )}
+
           <button
             onClick={() => setStep("participants")}
             disabled={!title.trim() || total <= 0 || total > TRANSACTION_LIMIT}
-            className="w-full bg-primary-600 text-white py-3.5 rounded-xl font-semibold disabled:opacity-40 hover:bg-primary-700 transition-colors"
+            className="btn-primary w-full"
           >
             Next: Add People
           </button>
         </div>
       )}
 
+      {/* ── Step: Participants ── */}
       {step === "participants" && (
-        <div>
-          <button onClick={() => setStep("details")} className="text-sm text-primary-600 mb-4">&larr; Back</button>
-          <p className="text-sm text-gray-500 mb-4">Add everyone who&apos;s splitting this expense.</p>
+        <div className="animate-fade-up">
+          <button
+            onClick={() => setStep("details")}
+            className="text-sm text-primary-600 font-semibold mb-4 flex items-center gap-1 hover:text-primary-700 transition-colors"
+          >
+            <span>&larr;</span> Back
+          </button>
+          <p className="text-sm text-surface-500 mb-4 font-body">
+            Add everyone who&apos;s splitting this expense.
+          </p>
 
           <div className="space-y-2 mb-4">
             {participants.map((p, i) => (
-              <div key={i} className="flex items-center justify-between bg-white rounded-xl px-4 py-3 border border-gray-100">
+              <div
+                key={i}
+                className="glass-card rounded-2xl px-4 py-3 flex items-center justify-between"
+              >
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-sm font-semibold text-primary-600">
-                    {p.name[0]}
+                  <div className="avatar w-9 h-9 text-xs flex items-center justify-center">
+                    {p.name[0].toUpperCase()}
                   </div>
-                  <span className="text-sm font-medium text-gray-900">{p.name}</span>
+                  <span className="text-sm font-medium text-surface-900 font-body">{p.name}</span>
                 </div>
                 {i === 0 ? (
-                  <span className="text-[10px] font-medium text-primary-600 bg-primary-50 px-2 py-0.5 rounded-full">You</span>
+                  <span className="status-badge bg-primary-50 text-primary-700">You</span>
                 ) : (
-                  <button onClick={() => removeParticipant(i)} className="text-red-400 text-xs">Remove</button>
+                  <button
+                    onClick={() => removeParticipant(i)}
+                    className="text-red-400 text-xs font-medium hover:text-red-500 transition-colors"
+                  >
+                    Remove
+                  </button>
                 )}
               </div>
             ))}
@@ -213,27 +240,32 @@ export default function CreateSplit({ state, currentUser, updateState, showToast
               onChange={(e) => setNewName(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && addParticipant()}
               placeholder="Add friend's name"
-              className="flex-1 px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none text-sm text-gray-900"
+              className="input-field flex-1 text-sm"
             />
             <button
               onClick={addParticipant}
               disabled={!newName.trim()}
-              className="px-4 py-3 bg-primary-600 text-white rounded-xl font-medium text-sm disabled:opacity-40"
+              className="px-4 py-3 bg-primary-600 text-white rounded-xl font-semibold text-sm disabled:opacity-40 hover:bg-primary-700 transition-colors"
             >
               Add
             </button>
           </div>
 
           <div className="mb-6">
-            <p className="text-xs text-gray-400 mb-2">Quick add:</p>
+            <p className="section-label mb-2">Quick add</p>
             <div className="flex gap-2 flex-wrap">
               {state.users
                 .filter((u) => !participants.some((p) => p.userId === u.id))
                 .map((u) => (
                   <button
                     key={u.id}
-                    onClick={() => setParticipants([...participants, { name: u.name, userId: u.id, amount: "", percentage: "" }])}
-                    className="text-xs bg-gray-100 text-gray-600 px-3 py-1.5 rounded-full hover:bg-primary-50 hover:text-primary-600 transition-colors"
+                    onClick={() =>
+                      setParticipants([
+                        ...participants,
+                        { name: u.name, userId: u.id, amount: "", percentage: "" },
+                      ])
+                    }
+                    className="text-xs bg-surface-100 text-surface-600 px-3 py-1.5 rounded-full hover:bg-primary-50 hover:text-primary-600 transition-colors font-medium"
                   >
                     + {u.name.split(" ")[0]}
                   </button>
@@ -244,34 +276,46 @@ export default function CreateSplit({ state, currentUser, updateState, showToast
           <button
             onClick={() => setStep("method")}
             disabled={participants.length < 2}
-            className="w-full bg-primary-600 text-white py-3.5 rounded-xl font-semibold disabled:opacity-40 hover:bg-primary-700 transition-colors"
+            className="btn-primary w-full"
           >
             Next: Split Method
           </button>
           {participants.length < 2 && (
-            <p className="text-xs text-red-400 mt-2 text-center">Add at least one more person</p>
+            <p className="text-xs text-red-400 mt-2 text-center font-body">
+              Add at least one more person
+            </p>
           )}
         </div>
       )}
 
+      {/* ── Step: Method ── */}
       {step === "method" && (
-        <div>
-          <button onClick={() => setStep("participants")} className="text-sm text-primary-600 mb-4">&larr; Back</button>
-          <p className="text-sm text-gray-500 mb-4">How do you want to split {formatCurrency(total)}?</p>
+        <div className="animate-fade-up">
+          <button
+            onClick={() => setStep("participants")}
+            className="text-sm text-primary-600 font-semibold mb-4 flex items-center gap-1 hover:text-primary-700 transition-colors"
+          >
+            <span>&larr;</span> Back
+          </button>
+          <p className="text-sm text-surface-500 mb-4 font-body">
+            How do you want to split {formatCurrency(total)}?
+          </p>
 
           <div className="space-y-2 mb-6">
             {(["equal", "custom", "percentage"] as SplitMethod[]).map((method) => (
               <button
                 key={method}
                 onClick={() => setSplitMethod(method)}
-                className={`w-full text-left px-4 py-3 rounded-xl border transition-colors ${
+                className={`w-full text-left px-4 py-3.5 rounded-2xl border transition-all ${
                   splitMethod === method
-                    ? "border-primary-500 bg-primary-50"
-                    : "border-gray-200 bg-white"
+                    ? "border-primary-500 bg-primary-50 shadow-glow"
+                    : "glass-card border-transparent"
                 }`}
               >
-                <span className="font-medium text-sm text-gray-900 capitalize">{method} Split</span>
-                <p className="text-xs text-gray-500 mt-0.5">
+                <span className="font-semibold text-sm text-surface-900 capitalize font-body">
+                  {method} Split
+                </span>
+                <p className="text-xs text-surface-500 mt-0.5 font-body">
                   {method === "equal" && `${formatCurrency(getEqualAmount())} each`}
                   {method === "custom" && "Set custom amounts per person"}
                   {method === "percentage" && "Set percentage per person"}
@@ -283,10 +327,15 @@ export default function CreateSplit({ state, currentUser, updateState, showToast
           {splitMethod === "custom" && (
             <div className="space-y-2 mb-4">
               {participants.map((p, i) => (
-                <div key={i} className="flex items-center gap-3 bg-white rounded-xl px-4 py-2 border border-gray-100">
-                  <span className="text-sm text-gray-700 flex-1">{p.name.split(" ")[0]}</span>
-                  <div className="flex items-center gap-1">
-                    <span className="text-xs text-gray-400">NGN</span>
+                <div
+                  key={i}
+                  className="glass-card rounded-2xl px-4 py-2.5 flex items-center gap-3"
+                >
+                  <span className="text-sm text-surface-700 flex-1 font-body font-medium">
+                    {p.name.split(" ")[0]}
+                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs text-surface-400 font-mono">NGN</span>
                     <input
                       type="number"
                       value={p.amount}
@@ -295,13 +344,17 @@ export default function CreateSplit({ state, currentUser, updateState, showToast
                         updated[i] = { ...updated[i], amount: e.target.value };
                         setParticipants(updated);
                       }}
-                      className="w-24 px-2 py-1 rounded-lg border border-gray-200 text-right text-sm text-gray-900"
+                      className="w-24 px-2 py-1 rounded-lg border border-surface-200 text-right text-sm text-surface-900 outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-100 bg-white/60 font-mono"
                       placeholder="0"
                     />
                   </div>
                 </div>
               ))}
-              <p className={`text-xs text-right ${amountsSum === total ? "text-primary-600" : "text-red-500"}`}>
+              <p
+                className={`text-xs text-right font-semibold font-body ${
+                  amountsSum === total ? "text-primary-600" : "text-red-500"
+                }`}
+              >
                 Total: {formatCurrency(amountsSum)} / {formatCurrency(total)}
               </p>
             </div>
@@ -310,9 +363,14 @@ export default function CreateSplit({ state, currentUser, updateState, showToast
           {splitMethod === "percentage" && (
             <div className="space-y-2 mb-4">
               {participants.map((p, i) => (
-                <div key={i} className="flex items-center gap-3 bg-white rounded-xl px-4 py-2 border border-gray-100">
-                  <span className="text-sm text-gray-700 flex-1">{p.name.split(" ")[0]}</span>
-                  <div className="flex items-center gap-1">
+                <div
+                  key={i}
+                  className="glass-card rounded-2xl px-4 py-2.5 flex items-center gap-3"
+                >
+                  <span className="text-sm text-surface-700 flex-1 font-body font-medium">
+                    {p.name.split(" ")[0]}
+                  </span>
+                  <div className="flex items-center gap-1.5">
                     <input
                       type="number"
                       value={p.percentage}
@@ -321,12 +379,12 @@ export default function CreateSplit({ state, currentUser, updateState, showToast
                         updated[i] = { ...updated[i], percentage: e.target.value };
                         setParticipants(updated);
                       }}
-                      className="w-16 px-2 py-1 rounded-lg border border-gray-200 text-right text-sm text-gray-900"
+                      className="w-16 px-2 py-1 rounded-lg border border-surface-200 text-right text-sm text-surface-900 outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-100 bg-white/60 font-mono"
                       placeholder="0"
                     />
-                    <span className="text-xs text-gray-400">%</span>
+                    <span className="text-xs text-surface-400">%</span>
                   </div>
-                  <span className="text-xs text-gray-400 w-20 text-right">
+                  <span className="text-xs text-surface-400 w-20 text-right font-mono">
                     {formatCurrency(Math.round((total * (Number(p.percentage) || 0)) / 100))}
                   </span>
                 </div>
@@ -334,7 +392,11 @@ export default function CreateSplit({ state, currentUser, updateState, showToast
               {(() => {
                 const pctSum = participants.reduce((s, p) => s + (Number(p.percentage) || 0), 0);
                 return (
-                  <p className={`text-xs text-right ${Math.abs(pctSum - 100) < 0.01 ? "text-primary-600" : "text-red-500"}`}>
+                  <p
+                    className={`text-xs text-right font-semibold font-body ${
+                      Math.abs(pctSum - 100) < 0.01 ? "text-primary-600" : "text-red-500"
+                    }`}
+                  >
                     Total: {pctSum}% / 100%
                   </p>
                 );
@@ -345,54 +407,75 @@ export default function CreateSplit({ state, currentUser, updateState, showToast
           <button
             onClick={() => setStep("review")}
             disabled={!isValidSplit()}
-            className="w-full bg-primary-600 text-white py-3.5 rounded-xl font-semibold disabled:opacity-40 hover:bg-primary-700 transition-colors"
+            className="btn-primary w-full"
           >
             Review Split
           </button>
         </div>
       )}
 
+      {/* ── Step: Review ── */}
       {step === "review" && (
-        <div>
-          <button onClick={() => setStep("method")} className="text-sm text-primary-600 mb-4">&larr; Back</button>
+        <div className="animate-fade-up">
+          <button
+            onClick={() => setStep("method")}
+            className="text-sm text-primary-600 font-semibold mb-4 flex items-center gap-1 hover:text-primary-700 transition-colors"
+          >
+            <span>&larr;</span> Back
+          </button>
 
-          <div className="bg-white rounded-xl border border-gray-100 p-4 mb-6">
-            <h3 className="font-semibold text-gray-900 mb-1">{title}</h3>
-            {description && <p className="text-xs text-gray-500 mb-3">{description}</p>}
-            <p className="text-2xl font-bold text-gray-900 mb-4">{formatCurrency(total)}</p>
+          <div className="glass-card rounded-2xl p-5 mb-5">
+            <h3 className="font-display font-semibold text-surface-900 mb-0.5 text-base">{title}</h3>
+            {description && (
+              <p className="text-xs text-surface-500 mb-3 font-body">{description}</p>
+            )}
+            <p className="font-display text-2xl font-bold text-surface-900 mb-5">
+              {formatCurrency(total)}
+            </p>
 
-            <div className="space-y-2">
+            <div className="space-y-1">
               {participants.map((p, i) => (
-                <div key={i} className="flex justify-between items-center py-2 border-b border-gray-50 last:border-0">
-                  <div className="flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-full bg-primary-100 flex items-center justify-center text-xs font-semibold text-primary-600">
-                      {p.name[0]}
+                <div
+                  key={i}
+                  className="flex justify-between items-center py-2.5 border-b border-surface-100 last:border-0"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="avatar w-7 h-7 text-xs flex items-center justify-center">
+                      {p.name[0].toUpperCase()}
                     </div>
-                    <span className="text-sm text-gray-700">{p.name}</span>
+                    <span className="text-sm text-surface-700 font-body">{p.name}</span>
+                    {p.userId === currentUser.id && (
+                      <span className="status-badge bg-primary-50 text-primary-700">You</span>
+                    )}
                   </div>
-                  <span className="text-sm font-semibold text-gray-900">{formatCurrency(amounts[i])}</span>
+                  <span className="text-sm font-semibold text-surface-900 font-mono">
+                    {formatCurrency(amounts[i])}
+                  </span>
                 </div>
               ))}
             </div>
 
-            <div className="mt-4 pt-3 border-t border-gray-100 flex justify-between">
-              <span className="text-xs text-gray-400 uppercase">Split method</span>
-              <span className="text-xs font-medium text-gray-600 capitalize">{splitMethod}</span>
+            <div className="mt-4 pt-3 border-t border-surface-100 flex justify-between items-center">
+              <span className="section-label">Split method</span>
+              <span className="text-xs font-semibold text-surface-600 capitalize font-body">
+                {splitMethod}
+              </span>
             </div>
           </div>
 
           {amounts.some((a) => a > AML_THRESHOLD) && (
-            <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-4">
-              <p className="text-xs text-amber-800">
-                <strong>AML Notice:</strong> One or more shares exceed {formatCurrency(AML_THRESHOLD)}. Payments may be flagged for review.
-              </p>
+            <div className="glass-card border border-accent-300 bg-accent-50 rounded-2xl p-4 mb-5">
+              <div className="flex items-start gap-2.5">
+                <span className="text-accent-500 text-base mt-0.5">&#9888;</span>
+                <p className="text-xs text-accent-700 leading-relaxed">
+                  <strong className="font-semibold">AML Notice:</strong> One or more shares exceed{" "}
+                  {formatCurrency(AML_THRESHOLD)}. Payments may be flagged for review.
+                </p>
+              </div>
             </div>
           )}
 
-          <button
-            onClick={handleCreate}
-            className="w-full bg-primary-600 text-white py-3.5 rounded-xl font-semibold hover:bg-primary-700 transition-colors"
-          >
+          <button onClick={handleCreate} className="btn-primary w-full">
             Create Split
           </button>
         </div>

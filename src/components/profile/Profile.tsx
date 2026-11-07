@@ -10,49 +10,52 @@ interface Props {
   showToast: (msg: string, type?: "success" | "error" | "warning" | "info") => void;
 }
 
+const KYC_STYLES: Record<string, string> = {
+  verified: "bg-primary-50 text-primary-700",
+  pending: "bg-accent-50 text-accent-700",
+  failed: "bg-red-50 text-red-600",
+};
+
 export default function Profile({ state, currentUser, onSwitchUser, onReset, showToast }: Props) {
-  const kycStyles = {
-    verified: "bg-primary-50 text-primary-700",
-    pending: "bg-amber-50 text-amber-700",
-    failed: "bg-red-50 text-red-700",
-  };
-
   return (
-    <div>
-      <h1 className="text-xl font-bold text-gray-900 mb-6">Profile</h1>
+    <div className="animate-fade-in">
+      {/* Page title */}
+      <h1 className="font-display font-bold text-xl text-surface-900 mb-6">Profile</h1>
 
-      <div className="bg-white rounded-xl border border-gray-100 p-4 mb-6">
+      {/* User card */}
+      <div className="glass-card rounded-2xl p-5 mb-5 animate-fade-up">
         <div className="flex items-center gap-4 mb-4">
-          <div className="w-14 h-14 rounded-full bg-primary-100 flex items-center justify-center text-xl font-bold text-primary-600">
+          <div className="avatar w-16 h-16 text-2xl">
             {currentUser.name[0]}
           </div>
           <div>
-            <h2 className="font-semibold text-gray-900">{currentUser.name}</h2>
-            <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${kycStyles[currentUser.kycStatus]}`}>
+            <h2 className="font-display font-bold text-lg text-surface-900">{currentUser.name}</h2>
+            <span className={`status-badge mt-1 ${KYC_STYLES[currentUser.kycStatus]}`}>
               KYC: {currentUser.kycStatus}
             </span>
           </div>
         </div>
 
-        <div className="space-y-2 text-sm">
-          <div className="flex justify-between py-2 border-b border-gray-50">
-            <span className="text-gray-400">Phone</span>
-            <span className="text-gray-700">{currentUser.phone}</span>
+        <div className="space-y-0 text-sm">
+          <div className="flex justify-between py-2.5 border-b border-surface-100">
+            <span className="text-surface-400">Phone</span>
+            <span className="text-surface-800 font-medium">{currentUser.phone}</span>
           </div>
-          <div className="flex justify-between py-2 border-b border-gray-50">
-            <span className="text-gray-400">Email</span>
-            <span className="text-gray-700">{currentUser.email}</span>
+          <div className="flex justify-between py-2.5 border-b border-surface-100">
+            <span className="text-surface-400">Email</span>
+            <span className="text-surface-800 font-medium">{currentUser.email}</span>
           </div>
-          <div className="flex justify-between py-2">
-            <span className="text-gray-400">BVN</span>
-            <span className="text-gray-700">***{currentUser.bvn.slice(-4)}</span>
+          <div className="flex justify-between py-2.5">
+            <span className="text-surface-400">BVN</span>
+            <span className="text-surface-800 font-medium">***{currentUser.bvn.slice(-4)}</span>
           </div>
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-100 p-4 mb-6">
-        <h3 className="text-xs font-semibold text-gray-400 uppercase mb-3">Demo: Switch Profile</h3>
-        <p className="text-xs text-gray-500 mb-3">
+      {/* Demo switcher */}
+      <div className="glass-card rounded-2xl p-5 mb-5 animate-fade-up">
+        <h3 className="section-label mb-1">Demo: Switch Profile</h3>
+        <p className="text-xs text-surface-500 mb-4">
           Switch between users to see different perspectives during your demo.
         </p>
         <div className="space-y-2">
@@ -63,19 +66,19 @@ export default function Profile({ state, currentUser, onSwitchUser, onReset, sho
                 onSwitchUser(user.id);
                 showToast(`Switched to ${user.name}`, "info");
               }}
-              className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border transition-colors ${
+              className={`w-full flex items-center justify-between px-4 py-3 rounded-xl border transition-all ${
                 user.id === currentUser.id
-                  ? "border-primary-500 bg-primary-50"
-                  : "border-gray-100 hover:border-gray-200"
+                  ? "border-primary-500 bg-primary-50 shadow-glow"
+                  : "border-surface-200 hover:border-surface-300"
               }`}
             >
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-sm font-semibold text-primary-600">
+                <div className="avatar w-9 h-9 text-xs">
                   {user.name[0]}
                 </div>
                 <div className="text-left">
-                  <p className="text-sm font-medium text-gray-900">{user.name}</p>
-                  <p className="text-[10px] text-gray-400">
+                  <p className="text-sm font-medium text-surface-900">{user.name}</p>
+                  <p className="text-[10px] text-surface-400">
                     {user.id === "user-tunde" && "Organizer persona"}
                     {user.id === "user-amaka" && "Participant persona"}
                     {user.id === "user-chidi" && "Edge case persona"}
@@ -83,26 +86,27 @@ export default function Profile({ state, currentUser, onSwitchUser, onReset, sho
                 </div>
               </div>
               {user.id === currentUser.id && (
-                <span className="text-xs text-primary-600 font-medium">Active</span>
+                <span className="text-xs text-primary-600 font-semibold">Active</span>
               )}
             </button>
           ))}
         </div>
       </div>
 
-      <div className="space-y-3">
+      {/* Reset & footer */}
+      <div className="space-y-4 animate-fade-up">
         <button
           onClick={() => {
             onReset();
             showToast("Demo data reset to defaults", "success");
           }}
-          className="w-full bg-red-50 text-red-600 py-3 rounded-xl font-medium text-sm hover:bg-red-100 transition-colors"
+          className="bg-red-50 text-red-600 py-3.5 rounded-2xl font-semibold text-sm hover:bg-red-100 border border-red-100 w-full transition-colors"
         >
           Reset Demo Data
         </button>
 
-        <div className="text-center text-xs text-gray-400 mt-4">
-          <p>Split & Settle MVP v1.0</p>
+        <div className="text-center text-xs text-surface-400 pb-2">
+          <p>Split &amp; Settle MVP v1.0</p>
           <p className="mt-1">Built for Product Dive Capstone Defense</p>
         </div>
       </div>
